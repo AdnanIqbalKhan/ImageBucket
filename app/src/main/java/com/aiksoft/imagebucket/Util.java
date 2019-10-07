@@ -19,7 +19,7 @@ public class Util {
         mContentResolver = context.getContentResolver();
     }
 
-    public List<String> getImages(String Album, int limit) {
+    public List<String> getImages(String Album) {
         List<String> list = new ArrayList<>();
         String[] projection = new String[]{
                 MediaStore.Images.ImageColumns._ID,
@@ -28,14 +28,16 @@ public class Util {
                 MediaStore.Images.ImageColumns.DATE_TAKEN,
                 MediaStore.Images.ImageColumns.DISPLAY_NAME
         };
-        String limitClause = null;
-        if (limit != 0) {
-            limitClause = MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC LIMIT " + limit;
+        String selection = MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME + " = ?";
+        String[] selectionArgs = new String[]{Album};
+        if (Album.equals("All")) {
+            selection = null;
+            selectionArgs = null;
         }
         Cursor cur = mContentResolver
                 .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        projection, MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME + " = ?",
-                        new String[]{Album}, limitClause);
+                        projection, selection, selectionArgs,
+                        MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC");
         assert cur != null;
         if (cur.moveToFirst()) {
             String data;
@@ -53,6 +55,7 @@ public class Util {
         Uri storageName;
         String columnName;
         List<String> list = new ArrayList<>();
+        list.add("All");
 
         columnName = MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME;
         storageName = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;

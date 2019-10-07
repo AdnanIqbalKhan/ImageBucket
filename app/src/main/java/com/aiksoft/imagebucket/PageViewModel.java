@@ -18,7 +18,7 @@ public class PageViewModel extends ViewModel {
     private LiveData<List<String>> mText = Transformations.map(mIndex, new Function<Integer, List<String>>() {
         @Override
         public List<String> apply(Integer input) {
-            List<String> images = util.getImages(mAlbums.get(input), 0);
+            List<String> images = util.getImages(mAlbums.get(input));
             return images;
         }
     });
